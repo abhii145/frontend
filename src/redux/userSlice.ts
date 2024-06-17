@@ -1,5 +1,5 @@
-// src/userSlice.ts
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { User, UserProps } from "../types";
 
 const initialState: UserProps = {
   user: null,
@@ -14,7 +14,8 @@ const userSlice = createSlice({
       (state.loading = false), (state.user = action.payload);
     },
     clearUser(state) {
-      (state.loading = false), (state.user = null);
+      state.loading = false;
+      state.user = null;
     },
   },
 });

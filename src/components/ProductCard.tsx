@@ -1,5 +1,3 @@
-import { useSelector } from "react-redux";
-import { RootState } from "../redux/store";
 
 
 const ProductCard = ({ product }) => {
@@ -11,7 +9,7 @@ const ProductCard = ({ product }) => {
     <div className="max-w-xs bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300 transform hover:-translate-y-1 mx-auto">
       <img
         className="w-full h-48 object-contain"
-        src={product.photo}
+        src={product.image}
         alt={product.title}
         loading="lazy"
       />

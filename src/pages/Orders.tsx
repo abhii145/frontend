@@ -1,7 +1,7 @@
 import React, { ReactElement, useState } from "react";
 import { Column } from "react-table";
 import { Link } from "react-router-dom";
-import TableHOC from "./admin/TableHOC";
+import { TableHOC } from "../components";
 
 type DataType = {
   _id: string;

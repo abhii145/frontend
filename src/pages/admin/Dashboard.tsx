@@ -1,44 +1,54 @@
 import { BsSearch } from "react-icons/bs";
 import { FaRegBell } from "react-icons/fa";
 import userImg from "../../assets/userpic.png";
-import { BiMaleFemale } from "react-icons/bi";
 import { WidgetItemData } from "../../constants";
 import WidgetItem from "../../components/admin/WidgetItem";
-import { BarChart, DoughnutChart } from "../../components/admin/Charts";
+import { BarChart } from "../../components/admin/Charts";
 import CategoryItem from "../../components/admin/CategoryItem";
-import data from '../../assets/data.json'
-import Table from "../../components/admin/DashboardTable";
+import data from "../../assets/data.json";
 
 const DashBoard = () => {
   return (
     <>
-      <main className="dashboard">
-        <div className="bar">
-          <BsSearch />
-
-          <input type="search" placeholder="Search" />
-          <FaRegBell />
-          <img src={userImg} alt="Profile" loading="lazy" />
+      <main className="flex flex-col p-4 space-y-4">
+        <div className="flex items-center justify-between bg-white p-4 rounded-lg shadow-md">
+          <div className="flex items-center space-x-2">
+            <BsSearch className="text-gray-500" />
+            <input
+              type="search"
+              placeholder="Search"
+              className="outline-none"
+            />
+          </div>
+          <div className="flex items-center space-x-4">
+            <FaRegBell className="text-gray-500" />
+            <img
+              src={userImg}
+              alt="Profile"
+              className="w-8 h-8 rounded-full"
+              loading="lazy"
+            />
+          </div>
         </div>
 
-        <section className="widget-container">
-          {WidgetItemData.map((item) => {
-            return (
-              <WidgetItem
-                key={item.heading}
-                percent={item.percent}
-                amount={item.amount}
-                value={item.value}
-                heading={item.heading}
-                color={item.color}
-              />
-            );
-          })}
+        <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {WidgetItemData.map((item) => (
+            <WidgetItem
+              key={item.heading}
+              percent={item.percent}
+              amount={item.amount}
+              value={item.value}
+              heading={item.heading}
+              color={item.color}
+            />
+          ))}
         </section>
 
-        <section className="graph-container">
-          <div className="revenue-chart">
-            <h2>Revenue & Transaction</h2>
+        <section className="grid gap-4 lg:grid-cols-2">
+          <div className="bg-white p-4 rounded-lg shadow-md">
+            <h2 className="text-xl font-semibold mb-4">
+              Revenue & Transaction
+            </h2>
             <BarChart
               data_2={[300, 144, 433, 655, 237, 755, 190]}
               data_1={[200, 444, 343, 556, 778, 455, 990]}
@@ -49,8 +59,8 @@ const DashBoard = () => {
             />
           </div>
 
-          <div className="dashboard-categories">
-            <h2>Inventory</h2>
+          <div className="bg-white p-4 rounded-lg shadow-md">
+            <h2 className="text-xl font-semibold mb-4">Inventory</h2>
             <div>
               {data.categories.map((i) => (
                 <CategoryItem
@@ -62,25 +72,6 @@ const DashBoard = () => {
               ))}
             </div>
           </div>
-        </section>
-
-        <section className="transaction-container">
-          <div className="gender-chart">
-            <h2>Gender Ratio</h2>
-
-            <DoughnutChart
-              labels={["Female", "Male"]}
-              data={[12, 19]}
-              backgroundColor={["hsl(340,82%,56%)", "rgba(53,162,235,0.8)"]}
-              cutout={90}
-            />
-
-            <p>
-              <BiMaleFemale />
-            </p>
-          </div>
-
-          <Table data={data.transaction} />
         </section>
       </main>
     </>

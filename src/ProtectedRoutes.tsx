@@ -1,7 +1,8 @@
 import { Navigate, Outlet } from "react-router-dom";
-import { AdminSidebar, Header } from "./components";
+import { Header } from "./components";
 import { useSelector } from "react-redux";
 import { RootState } from "./redux/store";
+import {  UserProps } from "./types";
 
 
 interface ProtectedRouteProps {
@@ -12,7 +13,7 @@ interface ProtectedRouteProps {
   redirect?: string;
 }
 
-const PublicLayout = ({ user }) => (
+const PublicLayout = ({ user }:UserProps) => (
   <>
     <Header user={user} />
     <Outlet />
@@ -36,24 +37,6 @@ const PrivateLayout = () => {
   );
 };
 
-
-// const AdminLayout = () => {
-//     const { user } = useSelector((state: RootState) => state.user);
-//     console.log(user)
-
-//   if (!user || user.role !== "admin") {
-//     return <Navigate to="/" />;
-//   }
-
-//   return (
-//     <div className="flex h-screen">
-//       <AdminSidebar />
-//       <div className="flex-grow p-6 bg-gray-100">
-//         <Outlet />
-//       </div>
-//     </div>
-//   );
-// };
 
 
 

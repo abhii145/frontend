@@ -1,86 +1,93 @@
-import { Column } from "react-table";
-import { ReactElement, useState, useCallback } from "react";
 import { Link } from "react-router-dom";
-import TableHOC from "../../components/admin/TableHOC";
 
-interface DataType {
-  user: string;
-  amount: number;
-  discount: number;
-  quantity: number;
-  status: ReactElement;
-  action: ReactElement;
-}
-
-const columns: Column<DataType>[] = [
-  {
-    Header: "Avatar",
-    accessor: "user",
-  },
-  {
-    Header: "Amount",
-    accessor: "amount",
-  },
-  {
-    Header: "Discount",
-    accessor: "discount",
-  },
-  {
-    Header: "Quantity",
-    accessor: "quantity",
-  },
-  {
-    Header: "Status",
-    accessor: "status",
-  },
-  {
-    Header: "Action",
-    accessor: "action",
-  },
-];
-
-const arr: DataType[] = [
+const transactionsData = [
   {
     user: "Charas",
     amount: 4500,
     discount: 400,
     quantity: 3,
-    status: <span className="red">Processing</span>,
-    action: <Link to="/admin/transaction/sajknaskd">Manage</Link>,
+    status: "Processing",
+    action: "/admin/transaction/sajknaskd",
   },
   {
     user: "Xavirors",
     amount: 6999,
     discount: 400,
-    status: <span className="green">Shipped</span>,
     quantity: 6,
-    action: <Link to="/admin/transaction/sajknaskd">Manage</Link>,
+    status: "Shipped",
+    action: "/admin/transaction/sajknaskd",
   },
   {
     user: "Xavirors",
     amount: 6999,
     discount: 400,
-    status: <span className="purple">Delivered</span>,
     quantity: 6,
-    action: <Link to="/admin/transaction/sajknaskd">Manage</Link>,
+    status: "Delivered",
+    action: "/admin/transaction/sajknaskd",
   },
 ];
 
 const Transactions = () => {
-  const [data] = useState<DataType[]>(arr);
-
-  const Table = useCallback(
-    TableHOC<DataType>(
-      columns,
-      data,
-      "dashboard-product-box",
-      "Transactions",
-      true
-    ),
-    []
+  return (
+    <main className="p-6 bg-gray-100 min-h-screen">
+      <div className="container mx-auto bg-white p-8 rounded-lg shadow-lg">
+        <h1 className="text-2xl font-semibold mb-6 text-center text-gray-800">
+          Transactions
+        </h1>
+        <div className="overflow-x-auto">
+          <table className="min-w-full bg-white border border-gray-300">
+            <thead className="bg-gray-200">
+              <tr>
+                <th className="text-left p-3">Avatar</th>
+                <th className="text-left p-3">Amount</th>
+                <th className="text-left p-3">Discount</th>
+                <th className="text-left p-3">Quantity</th>
+                <th className="text-left p-3">Status</th>
+                <th className="text-left p-3">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {transactionsData.map((transaction, index) => (
+                <tr key={index} className="border-t">
+                  <td className="p-3">
+                    <img
+                      src={`https://randomuser.me/api/portraits/men/${
+                        index + 1
+                      }.jpg`}
+                      alt="User Avatar"
+                      className="w-10 h-10 rounded-full"
+                    />
+                  </td>
+                  <td className="p-3">${transaction.amount}</td>
+                  <td className="p-3">${transaction.discount}</td>
+                  <td className="p-3">{transaction.quantity}</td>
+                  <td
+                    className={`p-3 ${
+                      transaction.status === "Processing"
+                        ? "text-red-500"
+                        : transaction.status === "Shipped"
+                        ? "text-green-500"
+                        : "text-purple-500"
+                    }`}
+                  >
+                    {transaction.status}
+                  </td>
+                  <td className="p-3">
+                    <Link
+                      to={transaction.action}
+                      className="text-blue-500 hover:underline"
+                    >
+                      Manage
+                    </Link>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
   );
-
-  return <main>{Table()}</main>;
 };
 
 export default Transactions;

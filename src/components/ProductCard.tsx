@@ -1,10 +1,6 @@
+import { Product } from "../types";
 
-
-const ProductCard = ({ product }) => {
-  
-
-
-
+const ProductCard = ({ product }: Product) => {
   return (
     <div className="max-w-xs bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300 transform hover:-translate-y-1 mx-auto">
       <img

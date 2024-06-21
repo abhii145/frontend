@@ -1,5 +1,4 @@
 import { useState, useRef, useEffect } from "react";
-import toast from "react-hot-toast";
 import {
   FaSearch,
   FaShoppingBag,
@@ -7,9 +6,11 @@ import {
   FaSignOutAlt,
   FaUser,
 } from "react-icons/fa";
-import { Link, redirect } from "react-router-dom";
-import { clearUser } from "../redux/userSlice";
+import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
+import { UserProps } from "../types";
+import { AppDispatch } from "../redux/store";
+import { logoutUser } from "../redux/userSlice";
 
 
 
@@ -18,16 +19,14 @@ const Header = (
 ) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const dialogRef = useRef<HTMLDivElement | null>(null);
-  const dispatch = useDispatch()
+  const dispatch = useDispatch<AppDispatch>()
+  const navigate = useNavigate();
 
   const logOutHandler = async () => {
-     try {
-       toast.success("logout successfully!");
-       dispatch(clearUser());
-       return redirect("/auth");
-     } catch (error) {
-       toast.error("logout Failed");
-     }
+const result = await dispatch(logoutUser());
+if (logoutUser.fulfilled.match(result)) {
+  navigate("/");
+}
   };
 
   const handleClickOutside = (event: MouseEvent) => {

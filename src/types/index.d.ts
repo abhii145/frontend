@@ -166,4 +166,5 @@ declare type User = {
 declare type UserProps = {
   user: User | null;
   loading?: boolean;
+  error?: string | null;
 };

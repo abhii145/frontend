@@ -3,10 +3,9 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useDispatch } from "react-redux";
-import axios from "axios";
-import toast from "react-hot-toast";
-import { setUser } from "../redux/userSlice";
+import { loginUser, signupUser } from "../redux/userSlice";
 import { useNavigate } from "react-router-dom";
+import { AppDispatch } from "../redux/store";
 
 const loginSchema = z.object({
   email: z.string().email(),
@@ -23,12 +22,12 @@ const signupSchema = loginSchema
     path: ["confirmPassword"],
   });
 
-type LoginFormInputs = z.infer<typeof loginSchema>;
-type SignupFormInputs = z.infer<typeof signupSchema>;
+export type LoginFormInputs = z.infer<typeof loginSchema>;
+export type SignupFormInputs = z.infer<typeof signupSchema>;
 
 const Auth: React.FC = () => {
   const [isLogin, setIsLogin] = useState(true);
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
 
   const loginForm = useForm<LoginFormInputs>({
@@ -42,30 +41,16 @@ const Auth: React.FC = () => {
   });
 
   const onLoginSubmit = async (data: LoginFormInputs) => {
-    try {
-      const response = await axios.post(
-        `${import.meta.env.VITE_BACKENDSERVER_URL}/user/login`,
-        data
-      );
-      toast.success("Logged in successfully!");
-      dispatch(setUser(response.data.details));
+    const result = await dispatch(loginUser(data));
+    if (loginUser.fulfilled.match(result)) {
       navigate("/");
-    } catch (error) {
-      toast.error("Login Failed");
     }
   };
 
   const onSignupSubmit = async (data: SignupFormInputs) => {
-    try {
-      const response = await axios.post(
-        `${import.meta.env.VITE_BACKENDSERVER_URL}/user/signup`,
-        data
-      );
-      toast.success("User created successfully!");
-      dispatch(setUser(response.data.details));
+    const result = await dispatch(signupUser(data));
+    if (signupUser.fulfilled.match(result)) {
       navigate("/");
-    } catch (error) {
-      toast.error("Signup Failed");
     }
   };
 

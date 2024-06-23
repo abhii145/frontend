@@ -73,7 +73,7 @@ const Products = () => {
               <h3 className="text-lg font-semibold mb-2 text-gray-900">
                 {row.title}
               </h3>
-              <p className="text-gray-600 mb-1">Price: ${row.price}</p>
+              <p className="text-gray-600 mb-1">Price: ₹{row.price}</p>
               <p className="text-gray-600 mb-1">Stock: {row.stock}</p>
               <p className="text-gray-500 mb-3">
                 {row.description.slice(0, 80)}...

@@ -1,3 +1,4 @@
+import { productAPI } from './api/productAPI';
 // src/store.ts
 import { configureStore } from "@reduxjs/toolkit";
 import {
@@ -11,7 +12,7 @@ import {
   REGISTER,
 } from "redux-persist";
 import storage from "redux-persist/lib/storage";
-import userReducer from "./userSlice";
+import userReducer from "./reducer/userSlice";
 
 const persistConfig = {
   key: "root",
@@ -23,13 +24,14 @@ const persistedReducer = persistReducer(persistConfig, userReducer);
 export const store = configureStore({
   reducer: {
     user: persistedReducer,
+    [productAPI.reducerPath]: productAPI.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {
         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
       },
-    }),
+    }).concat(productAPI.middleware)
 });
 
 export const persistor = persistStore(store);

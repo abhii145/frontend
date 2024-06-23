@@ -1,33 +1,40 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import ProductCard from "../components/ProductCard";
-import { Loader } from "../components";
+import { useCategoriesQuery, useSearchProductsQuery } from "../redux/api/productAPI";
+import toast from "react-hot-toast";
 
 const OfferPage: React.FC = () => {
   const [isSidebarOpen, setSidebarOpen] = useState(false);
-  const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    fetch("https://fakestoreapi.com/products")
-      .then((response) => response.json())
-      .then((data) => {
-        setProducts(data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        setError("Failed to fetch products");
-        setLoading(false);
-      });
-  }, []);
+  const {
+    data: categoriesResponse,
+    isError,
+    isLoading: loadingCategories,
+  } = useCategoriesQuery("");
 
-  if (loading) return (
-    <div>
-      <Loader />
-    </div>
-  );
-  if (error) return <div>{error}</div>;
+  const [search, setSearch] = useState("");
+  const [sort, setSort] = useState("");
+  const [maxPrice, setMaxPrice] = useState(100000);
+  const [category, setCategory] = useState("");
+  const [page, setPage] = useState(1);
+
+  const {
+    isLoading: productLoading,
+    data: searchedData,
+    isError: productIsError,
+    error: productError,
+  } = useSearchProductsQuery({
+    search,
+    sort,
+    category,
+    page,
+    price: maxPrice,
+  });
+
+
+
+ if (isError) return toast.error('failed to fetch categories');
 
   const toggleSidebar = () => {
     setSidebarOpen(!isSidebarOpen);
@@ -56,33 +63,52 @@ const OfferPage: React.FC = () => {
             <label htmlFor="sort" className="block mb-2">
               Sort By
             </label>
-            <select id="sort" className="w-full p-2 border rounded">
-              <option value="none">None</option>
-              <option value="lowToHigh">Price: Low to High</option>
-              <option value="highToLow">Price: High to Low</option>
+            <select
+              value={sort}
+              onChange={(e) => setSort(e.target.value)}
+              className="w-full p-2 border rounded"
+            >
+              <option value="">None</option>
+              <option value="asc">Price (Low to High)</option>
+              <option value="dsc">Price (High to Low)</option>
             </select>
           </div>
 
           {/* Price Range Slider */}
           <div className="mt-4">
-            <label className="block mb-2">Price Range</label>
-            <input type="range" min="100" max="100000" className="w-full" />
-            <div className="flex justify-between mt-2">
+            <label className="block mb-2">Max Price: {maxPrice || ""}</label>
+            <input
+              type="range"
+              min={100}
+              max={100000}
+              value={maxPrice}
+              onChange={(e) => setMaxPrice(Number(e.target.value))}
+              className="w-full"
+            />
+            {/* <div className="flex justify-between mt-2">
               <span>$100</span>
               <span>$100,000</span>
-            </div>
+            </div> */}
           </div>
 
           {/* Category Dropdown */}
           <div className="mt-4">
-            <label htmlFor="category" className="block mb-2">
+            <label className="block mb-2">
               Category
             </label>
-            <select id="category" className="w-full p-2 border rounded">
-              <option value="all">All</option>
-              <option value="camera">Camera</option>
-              <option value="watch">Watch</option>
-              <option value="clothes">Clothes</option>
+            <select
+              className="w-full p-2 border rounded"
+              onChange={(e) => setCategory(e.target.value)}
+            >
+              <option value="">All</option>
+              {!loadingCategories &&
+                categoriesResponse?.categoriesProducts.map(
+                  (category, index) => (
+                    <option key={index} value={category}>
+                      {category}
+                    </option>
+                  )
+                )}
             </select>
           </div>
         </div>
@@ -115,9 +141,9 @@ const OfferPage: React.FC = () => {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {products.map((product) => (
-            <Link to={`/product/${product?.id}`} key={product?.id}>
-              <ProductCard product={product} />
+          {searchedData?.products.map((product) => (
+            <Link to={`/product/${product?._id}`} key={product?.id}>
+              <ProductCard product={product} title={""} price={0} stock={0} category={""} description={""} photo={""} _id={""} />
             </Link>
           ))}
         </div>

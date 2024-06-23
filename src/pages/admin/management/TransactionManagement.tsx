@@ -138,7 +138,12 @@ const ProductCard = ({
   _id: string;
 }) => (
   <div className="bg-white p-4 rounded-lg shadow-md flex items-center space-x-4">
-    <img src={photo} alt={name} className="w-16 h-16 object-cover rounded-md" />
+    <img
+      src={photo}
+      alt={name}
+      className="w-16 h-16 object-cover rounded-md"
+      loading="lazy"
+    />
     <div>
       <Link
         to={`/product/${_id}`}

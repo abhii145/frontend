@@ -1,8 +1,8 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import toast from "react-hot-toast";
-import { UserProps } from "../types";
-import { LoginFormInputs, SignupFormInputs } from "../pages/Auth";
+import { UserProps } from "../../types";
+import { LoginFormInputs, SignupFormInputs } from "../../pages/Auth";
 
 const initialState: UserProps = {
   user: null,
@@ -59,12 +59,15 @@ export const logoutUser = createAsyncThunk(
 
 export const getUser = createAsyncThunk(
   "user/getUser",
-  async (id:string, { rejectWithValue }) => {
+  async (id: string, { rejectWithValue }) => {
     try {
       const response = await axios.get(
         `${import.meta.env.VITE_BACKENDSERVER_URL}/user/${id}`
       );
-       toast.success("User fetched successfully!", response?.data.userDetails.name);
+      toast.success(
+        "User fetched successfully!",
+        response?.data.userDetails.name
+      );
       return response.data.userDetails;
     } catch (error) {
       toast.error("Fetch Failed");

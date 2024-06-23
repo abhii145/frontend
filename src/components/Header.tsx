@@ -10,23 +10,19 @@ import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { UserProps } from "../types";
 import { AppDispatch } from "../redux/store";
-import { logoutUser } from "../redux/userSlice";
+import { logoutUser } from "../redux/reducer/userSlice";
 
-
-
-const Header = (
-  {user}:UserProps
-) => {
+const Header = ({ user }: UserProps) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const dialogRef = useRef<HTMLDivElement | null>(null);
-  const dispatch = useDispatch<AppDispatch>()
+  const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
 
   const logOutHandler = async () => {
-const result = await dispatch(logoutUser());
-if (logoutUser.fulfilled.match(result)) {
-  navigate("/");
-}
+    const result = await dispatch(logoutUser());
+    if (logoutUser.fulfilled.match(result)) {
+      navigate("/");
+    }
   };
 
   const handleClickOutside = (event: MouseEvent) => {

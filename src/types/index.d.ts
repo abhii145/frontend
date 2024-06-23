@@ -1,7 +1,6 @@
 import { IconType } from "react-icons";
 import { Location } from "react-router-dom";
 
-
 declare type LiProps = {
   url: string;
   text: string;
@@ -43,12 +42,26 @@ declare type Product = {
   _id: string;
 };
 
+declare type AllProductResponse = {
+  success: boolean;
+  products: Product[];
+  totalPage?: number;
+};
+
 declare type ShippingInfo = {
   address: string;
   city: string;
   state: string;
   country: string;
   pinCode: string;
+};
+
+declare type searchProductRequest = {
+  price: number;
+  category: string;
+  search: string;
+  sort: string;
+  page: number;
 };
 
 declare type CartItem = {
@@ -155,7 +168,6 @@ declare type Line = {
   revenue: number[];
 };
 
-
 declare type User = {
   name: string;
   email: string;
@@ -167,4 +179,19 @@ declare type UserProps = {
   user: User | null;
   loading?: boolean;
   error?: string | null;
+};
+
+declare type NewProductRequest = {
+  id: string;
+  formData: FormData;
+};
+
+declare type UpdateProductRequest = {
+  userId: string;
+  productId: string;
+  formData: FormData;
+};
+declare type DeleteProductRequest = {
+  userId: string;
+  productId: string;
 };

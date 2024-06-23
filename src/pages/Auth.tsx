@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useDispatch } from "react-redux";
-import { loginUser, signupUser } from "../redux/userSlice";
+import { loginUser, signupUser } from "../redux/reducer/userSlice";
 import { useNavigate } from "react-router-dom";
 import { AppDispatch } from "../redux/store";
 

@@ -2,6 +2,11 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../redux/store";
+import { useNewProductMutation } from "../../../redux/api/productAPI";
+import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 const MAX_FILE_SIZE = 1024 * 1024 * 5;
 const ACCEPTED_IMAGE_MIME_TYPES = [
@@ -9,11 +14,14 @@ const ACCEPTED_IMAGE_MIME_TYPES = [
   "image/jpg",
   "image/png",
   "image/webp",
+  "image/avif",
 ];
 
 const productSchema = z.object({
-  name: z.string().min(1, "Name is required"),
+  title: z.string().min(1, "title is required"),
+  description: z.string().min(1, "Description is required"),
   price: z.number().positive("Price must be a positive number"),
+  category: z.string().min(1, "Category is required"),
   stock: z.number().int().nonnegative("Stock must be a non-negative integer"),
   photo: z
     .any()
@@ -30,6 +38,9 @@ type ProductFormInputs = z.infer<typeof productSchema>;
 
 const NewProducts: React.FC = () => {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const { user } = useSelector((state: RootState) => state.user);
+  const navigate = useNavigate();
+
   const {
     register,
     handleSubmit,
@@ -38,9 +49,29 @@ const NewProducts: React.FC = () => {
     resolver: zodResolver(productSchema),
   });
 
-  const onSubmit = (data: ProductFormInputs) => {
-    console.log(data);
-    // Handle form submission, e.g., send data to an API
+  const [newProduct] = useNewProductMutation();
+
+  const onSubmit = async (data: ProductFormInputs) => {
+    if (!user?._id) {
+      console.error("User ID is required");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("title", data.title);
+    formData.append("description", data.description);
+    formData.append("price", data.price.toString());
+    formData.append("category", data.category);
+    formData.append("stock", data.stock.toString());
+    formData.append("photo", data.photo[0]);
+
+    try {
+      await newProduct({ formData, id: user._id }).unwrap();
+      toast.success("Product created successfully");
+      return navigate("/admin/product");
+    } catch (error) {
+      toast.error("Failed to create product:", error);
+    }
   };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -62,6 +93,7 @@ const NewProducts: React.FC = () => {
               src={previewUrl}
               alt="Image Preview"
               className="w-full h-auto rounded-lg shadow-md"
+              loading="lazy"
             />
           ) : (
             <div className="w-full h-64 bg-gray-200 flex items-center justify-center rounded-lg shadow-md">
@@ -74,19 +106,57 @@ const NewProducts: React.FC = () => {
             <h2 className="text-2xl font-semibold mb-4">New Product</h2>
             <div>
               <label
-                htmlFor="name"
+                htmlFor="title"
                 className="block text-sm font-medium text-gray-700"
               >
-                Name:
+                Title:
               </label>
               <input
-                id="name"
-                {...register("name")}
+                id="title"
+                {...register("title")}
                 className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
               />
-              {errors.name && (
+              {errors.title && (
                 <p className="text-red-500 text-xs mt-1">
-                  {errors.name.message}
+                  {errors.title.message}
+                </p>
+              )}
+            </div>
+
+            <div>
+              <label
+                htmlFor="description"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Description:
+              </label>
+              <textarea
+                id="description"
+                {...register("description")}
+                className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              />
+              {errors.description && (
+                <p className="text-red-500 text-xs mt-1">
+                  {errors.description.message}
+                </p>
+              )}
+            </div>
+
+            <div>
+              <label
+                htmlFor="category"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Category:
+              </label>
+              <input
+                id="category"
+                {...register("category")}
+                className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              />
+              {errors.category && (
+                <p className="text-red-500 text-xs mt-1">
+                  {errors.category.message}
                 </p>
               )}
             </div>

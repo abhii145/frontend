@@ -56,6 +56,7 @@ const Transactions = () => {
                       }.jpg`}
                       alt="User Avatar"
                       className="w-10 h-10 rounded-full"
+                      loading="lazy"
                     />
                   </td>
                   <td className="p-3">${transaction.amount}</td>

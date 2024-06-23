@@ -25,7 +25,7 @@ const CartItems = ({ id, title, price, image, quantity }: CartItemsProps) => {
         >
           {title}
         </Link>
-        <p className="text-gray-600">${price}</p>
+        <p className="text-gray-600">₹{price}</p>
         <div className="flex items-center space-x-2 mt-2">
           <button className="px-2 py-1 bg-gray-200 rounded hover:bg-gray-300">
             <FaPlus />

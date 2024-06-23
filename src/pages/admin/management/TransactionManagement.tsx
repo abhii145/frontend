@@ -152,7 +152,7 @@ const ProductCard = ({
         {name}
       </Link>
       <span className="block text-gray-500">
-        ${price} x {quantity} = ${price * quantity}
+        ₹{price} x {quantity} = ₹{price * quantity}
       </span>
     </div>
   </div>

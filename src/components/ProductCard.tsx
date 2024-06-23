@@ -15,7 +15,7 @@ const ProductCard = ({ product }: Product) => {
           {product?.description?.slice(0, 120)} ...
           <span className="text-blue-500">Read more</span>
         </h2>
-        <p className="text-gray-600 mt-2">${product.price.toFixed(2)}</p>
+        <p className="text-gray-600 mt-2">₹{product.price.toFixed(2)}</p>
       </div>
     </div>
   );

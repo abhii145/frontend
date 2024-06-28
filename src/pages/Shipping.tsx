@@ -1,16 +1,18 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
+import { useDispatch, useSelector } from "react-redux";
+import { saveShippingInfo } from "../redux/reducer/cartSlice";
+import { useNavigate } from "react-router-dom";
+import { RootState } from "../redux/store";
 
 const shippingSchema = z.object({
-  addressLine1: z.string().min(1, { message: "Required" }),
-  addressLine2: z.string().optional(),
-  landmark: z.string().optional(),
+  address: z.string().min(1, { message: "Required" }),
   city: z.string().min(1, { message: "Required" }),
   state: z.string().min(1, { message: "Required" }),
   country: z.string().min(1, { message: "Required" }),
-  pincode: z.string().regex(/^\d{6}$/),
+  pinCode: z.string().regex(/^\d{6}$/),
 });
 
 type ShippingFormInputs = z.infer<typeof shippingSchema>;
@@ -24,9 +26,17 @@ const Shipping: React.FC = () => {
     resolver: zodResolver(shippingSchema),
   });
 
+  const { cartItems } = useSelector((state: RootState) => state.cartSlice);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (cartItems.length <= 0) return navigate("/cart");
+  }, [cartItems.length, navigate]);
+
+  const disptach = useDispatch();
+
   const onSubmit = (data: ShippingFormInputs) => {
-    console.log(data);
-    // Navigate to payment page or handle submission
+    disptach(saveShippingInfo(data));
   };
 
   return (
@@ -37,44 +47,20 @@ const Shipping: React.FC = () => {
         className="space-y-4 bg-white p-6 rounded-lg shadow-md"
       >
         <div className="flex flex-col">
-          <label htmlFor="addressLine1" className="mb-2 font-medium">
-            Address Line 1
+          <label htmlFor="address" className="mb-2 font-medium">
+            Full Address
           </label>
           <input
-            id="addressLine1"
+            id="address"
             type="text"
-            {...register("addressLine1")}
+            {...register("address")}
             className={`p-2 border rounded ${
-              errors.addressLine1 ? "border-red-500" : "border-gray-300"
+              errors.address ? "border-red-500" : "border-gray-300"
             }`}
           />
-          {errors.addressLine1 && (
-            <p className="text-red-500 mt-1">{errors.addressLine1.message}</p>
+          {errors.address && (
+            <p className="text-red-500 mt-1">{errors.address.message}</p>
           )}
-        </div>
-
-        <div className="flex flex-col">
-          <label htmlFor="addressLine2" className="mb-2 font-medium">
-            Address Line 2
-          </label>
-          <input
-            id="addressLine2"
-            type="text"
-            {...register("addressLine2")}
-            className="p-2 border rounded border-gray-300"
-          />
-        </div>
-
-        <div className="flex flex-col">
-          <label htmlFor="landmark" className="mb-2 font-medium">
-            Landmark
-          </label>
-          <input
-            id="landmark"
-            type="text"
-            {...register("landmark")}
-            className="p-2 border rounded border-gray-300"
-          />
         </div>
 
         <div className="flex flex-col">
@@ -129,19 +115,19 @@ const Shipping: React.FC = () => {
         </div>
 
         <div className="flex flex-col">
-          <label htmlFor="pincode" className="mb-2 font-medium">
+          <label htmlFor="pinCode" className="mb-2 font-medium">
             Pincode
           </label>
           <input
-            id="pincode"
+            id="pinCode"
             type="text"
-            {...register("pincode")}
+            {...register("pinCode")}
             className={`p-2 border rounded ${
-              errors.pincode ? "border-red-500" : "border-gray-300"
+              errors.pinCode ? "border-red-500" : "border-gray-300"
             }`}
           />
-          {errors.pincode && (
-            <p className="text-red-500 mt-1">{errors.pincode.message}</p>
+          {errors.pinCode && (
+            <p className="text-red-500 mt-1">{errors.pinCode.message}</p>
           )}
         </div>
 

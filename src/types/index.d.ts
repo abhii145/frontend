@@ -48,6 +48,14 @@ declare type AllProductResponse = {
   totalPage?: number;
 };
 
+
+
+declare type AllOrderResponse = {
+  success: boolean;
+  orders: Order[];
+  totalPage?: number;
+};
+
 declare type ShippingInfo = {
   address: string;
   city: string;
@@ -55,6 +63,7 @@ declare type ShippingInfo = {
   country: string;
   pinCode: string;
 };
+
 
 declare type searchProductRequest = {
   price: number;

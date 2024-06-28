@@ -1,12 +1,39 @@
+// Updated ProductDetails.tsx with stock limit check for Add to Cart button
+
 import React from "react";
 import { useParams } from "react-router-dom";
 import Loader from "./Loader";
 import { useSingleProductQuery } from "../redux/api/productAPI";
+import { useDispatch, useSelector } from "react-redux";
+import { addToCart } from "../redux/reducer/cartSlice";
+import toast from "react-hot-toast";
+import { RootState } from "../redux/store";
 
 const ProductDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
+  const dispatch = useDispatch();
+  const {cartItems} = useSelector((state:RootState) =>state.cartSlice);
+
+  const handleAddToCart = (data) => {
+    try {
+      dispatch(
+        addToCart({
+          ...data,
+          quantity: 1,
+        })
+      );
+      toast.success("Added to cart");
+    } catch (error) {
+      toast.error("Error adding to cart");
+    }
+  };
 
   const { data, isLoading, isError } = useSingleProductQuery(id as string);
+
+  const isAtStockLimit = (product) => {
+    const itemInCart = cartItems.find((item) => item._id === product._id);
+    return itemInCart && itemInCart.quantity >= product.stock;
+  };
 
   if (!id) {
     return <div>No product ID provided</div>;
@@ -46,8 +73,18 @@ const ProductDetail: React.FC = () => {
               <span className="text-2xl font-semibold text-gray-900">
                 ₹{data.product.price.toFixed(2)}
               </span>
-              <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-300">
-                Add to Cart
+              <button
+                className={`bg-blue-500 text-white px-4 py-2 rounded transition duration-300 ${
+                  isAtStockLimit(data.product)
+                    ? "opacity-50 cursor-not-allowed"
+                    : "hover:bg-blue-600"
+                }`}
+                onClick={() =>
+                  !isAtStockLimit(data.product) && handleAddToCart(data.product)
+                }
+                disabled={isAtStockLimit(data.product)}
+              >
+                {!isAtStockLimit(data.product) ? 'Add To Cart' : 'out of stock'}
               </button>
             </div>
           </div>

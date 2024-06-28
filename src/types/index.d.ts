@@ -65,7 +65,7 @@ declare type searchProductRequest = {
 };
 
 declare type CartItem = {
-  productId: string;
+  _id: string;
   photo: string;
   title: string;
   price: number;
@@ -195,3 +195,15 @@ declare type DeleteProductRequest = {
   userId: string;
   productId: string;
 };
+
+
+export interface CartReducerInitialState {
+  loading: boolean;
+  cartItems: CartItem[];
+  subtotal: number;
+  tax: number;
+  shippingCharges: number;
+  discount: number;
+  total: number;
+  shippingInfo: ShippingInfo;
+}

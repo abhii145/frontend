@@ -1,6 +1,6 @@
-import { productAPI } from './api/productAPI';
+import { productAPI } from "./api/productAPI";
 // src/store.ts
-import { configureStore } from "@reduxjs/toolkit";
+import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import {
   persistStore,
   persistReducer,
@@ -13,25 +13,29 @@ import {
 } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import userReducer from "./reducer/userSlice";
+import cartSlice from "./reducer/cartSlice";
 
 const persistConfig = {
   key: "root",
   storage,
 };
 
-const persistedReducer = persistReducer(persistConfig, userReducer);
+const rootReducer = combineReducers({
+  user: userReducer,
+  cartSlice:cartSlice,
+  [productAPI.reducerPath]: productAPI.reducer,
+});
+
+const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 export const store = configureStore({
-  reducer: {
-    user: persistedReducer,
-    [productAPI.reducerPath]: productAPI.reducer,
-  },
+  reducer: persistedReducer,
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {
         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
       },
-    }).concat(productAPI.middleware)
+    }).concat(productAPI.middleware),
 });
 
 export const persistor = persistStore(store);

@@ -14,6 +14,7 @@ import {
 import storage from "redux-persist/lib/storage";
 import userReducer from "./reducer/userSlice";
 import cartSlice from "./reducer/cartSlice";
+import { orderAPI } from "./api/orderAPI";
 
 const persistConfig = {
   key: "root",
@@ -24,6 +25,7 @@ const rootReducer = combineReducers({
   user: userReducer,
   cartSlice:cartSlice,
   [productAPI.reducerPath]: productAPI.reducer,
+  [orderAPI.reducerPath]: orderAPI.reducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
@@ -35,7 +37,7 @@ export const store = configureStore({
       serializableCheck: {
         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
       },
-    }).concat(productAPI.middleware),
+    }).concat(productAPI.middleware, orderAPI.middleware),
 });
 
 export const persistor = persistStore(store);

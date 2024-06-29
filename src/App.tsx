@@ -24,8 +24,14 @@ import {
   Coupon,
   AdminLayout,
 } from "./pages";
-import { AdminProtectedRoute, PrivateLayout, PublicLayout } from "./ProtectedRoutes";
+import {
+  AdminProtectedRoute,
+  PrivateLayout,
+  PublicLayout,
+} from "./ProtectedRoutes";
 import ProductDetail from "./components/ProductDetails";
+import NotFound from "./components/NotFound";
+import Checkout from "./pages/Checkout";
 
 const App = () => {
   const { user } = useSelector((state: RootState) => state.user);
@@ -51,6 +57,7 @@ const App = () => {
             <Route path="/shipping" element={<Shipping />} />
             <Route path="/orders" element={<Orders />} />
             <Route path="/order/:id" element={<Orders />} />
+            <Route path="/pay" element={<Checkout />} />
           </Route>
 
           {/* Admin Routes */}
@@ -80,6 +87,8 @@ const App = () => {
               <Route path="app/coupon" element={<Coupon />} />
             </Route>
           </Route>
+
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </Suspense>
     </Router>

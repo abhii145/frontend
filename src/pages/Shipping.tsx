@@ -6,6 +6,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { saveShippingInfo } from "../redux/reducer/cartSlice";
 import { useNavigate } from "react-router-dom";
 import { RootState } from "../redux/store";
+import { BiArrowBack } from "react-icons/bi";
+import axios from "axios";
 
 const shippingSchema = z.object({
   address: z.string().min(1, { message: "Required" }),
@@ -26,21 +28,43 @@ const Shipping: React.FC = () => {
     resolver: zodResolver(shippingSchema),
   });
 
-  const { cartItems } = useSelector((state: RootState) => state.cartSlice);
+  const { cartItems, total } = useSelector(
+    (state: RootState) => state.cartSlice
+  );
   const navigate = useNavigate();
+  const disptach = useDispatch();
 
   useEffect(() => {
     if (cartItems.length <= 0) return navigate("/cart");
   }, [cartItems.length, navigate]);
 
-  const disptach = useDispatch();
+  const onSubmit = async (
+    formData: ShippingFormInputs,
+    event?: React.BaseSyntheticEvent
+  ) => {
+    event?.preventDefault();
+    try {
+      disptach(saveShippingInfo(formData));
 
-  const onSubmit = (data: ShippingFormInputs) => {
-    disptach(saveShippingInfo(data));
+      const { data } = await axios.post(
+        `${import.meta.env.VITE_BACKENDSERVER_URL}/payment/create`,
+        {
+          amount: total,
+        }
+      );
+      navigate("/pay", {
+        state: data.clientSecret,
+      });
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
     <div className="container mx-auto p-4">
+      <button className="back-btn" onClick={() => navigate("/cart")}>
+        <BiArrowBack />
+      </button>
       <h1 className="text-2xl font-semibold mb-6">Shipping Details</h1>
       <form
         onSubmit={handleSubmit(onSubmit)}

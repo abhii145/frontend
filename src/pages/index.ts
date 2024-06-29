@@ -4,6 +4,7 @@ const Home = lazy(() => import("./Home"));
 const Search = lazy(() => import("./Search"));
 const Cart = lazy(() => import("./Cart"));
 const Shipping = lazy(() => import("./Shipping"));
+
 const Auth = lazy(() => import("./Auth"));
 const Orders = lazy(() => import("./Orders"));
 

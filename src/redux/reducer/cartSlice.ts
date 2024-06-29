@@ -79,6 +79,7 @@ export const cartSlice = createSlice({
     saveShippingInfo: (state, action: PayloadAction<ShippingInfo>) => {
       state.shippingInfo = action.payload;
     },
+    resetCart: () => initialState,
   },
 });
 
@@ -89,6 +90,8 @@ export const {
   decreaseQuantity,
   calculatePrice,
   discountApplied,
+  saveShippingInfo,
+  resetCart,
 } = cartSlice.actions;
 
 export default cartSlice.reducer;

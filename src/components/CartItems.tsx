@@ -2,6 +2,7 @@ import { FaMinus, FaPlus, FaTrash } from "react-icons/fa";
 import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import {
+  calculatePrice,
   decreaseQuantity,
   increaseQuantity,
   removeCartItem,
@@ -21,10 +22,12 @@ const CartItems = ({ id, title, price, photo, quantity }: CartItemsProps) => {
 
   const handleIncreaseQuantity = (id: string) => {
     dispatch(increaseQuantity(id));
+     dispatch(calculatePrice());
   };
 
   const handleDecreaseQuantity = (id: string) => {
     dispatch(decreaseQuantity(id));
+     dispatch(calculatePrice());
   };
 
   const handleRemoveCartItem = (id: string) => {

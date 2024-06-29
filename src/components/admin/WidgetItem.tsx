@@ -15,7 +15,8 @@ const WidgetItem = ({
         <h4 className="text-xl font-bold">{amount ? `$${value}` : value}</h4>
         {percent > 0 ? (
           <span className="text-green-500 flex items-center">
-            <HiTrendingUp className="mr-1" /> +{percent}%
+            <HiTrendingUp className="mr-1" /> +{" "}
+            {percent > 0 && `${percent > 1000 ? 999 : percent}%`}
           </span>
         ) : (
           <span className="text-red-500 flex items-center">
@@ -52,7 +53,8 @@ const WidgetItem = ({
           className="absolute inset-0 flex items-center justify-center text-xl font-semibold"
           style={{ color }}
         >
-          {percent}%
+          {percent > 0 && `${percent > 1000 ? 999 : percent}%`}
+          {percent < 0 && `${percent < -10000 ? -999 : percent}%`}
         </div>
       </div>
     </article>

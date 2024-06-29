@@ -216,3 +216,20 @@ export interface CartReducerInitialState {
   total: number;
   shippingInfo: ShippingInfo;
 }
+
+
+export type NewOrderRequest = {
+  shippingInfo: ShippingInfo;
+  orderItems: CartItem[];
+  subtotal: number;
+  tax: number;
+  shippingCharges: number;
+  discount: number;
+  total: number;
+  user: string;
+};
+
+export type UpdateOrderRequest = {
+  userId: string;
+  orderId: string;
+};

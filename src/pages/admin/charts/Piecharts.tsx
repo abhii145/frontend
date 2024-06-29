@@ -1,7 +1,37 @@
 import { DoughnutChart, PieChart } from "../../../components/admin/Charts";
 import data from "../../../assets/data.json";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../redux/store";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import toast from "react-hot-toast";
 
 const PieCharts = () => {
+  const { user } = useSelector((state: RootState) => state.user);
+
+  const [pieChartsStats, setPieChartsStats] = useState([]);
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const res = await axios.get(
+          `http://localhost:5005/api/v1/dashboard/pie?id=${user?._id}`
+        );
+        const data = await res?.data;
+        console.log(data);
+        setPieChartsStats(data);
+      } catch (error) {
+        toast.error("Failed to fetch stats");
+      }
+    };
+    fetchStats();
+  }, [user?._id]);
+
+  const order = pieChartsStats.charts?.orderFullfillment;
+  const stock = pieChartsStats?.charts?.stockAvailablity;
+  const revenue = pieChartsStats?.charts?.revenueDistribution;
+  const adminCustomer = pieChartsStats?.charts?.adminCustomer;
+
   return (
     <div className="p-4">
       <main className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -11,7 +41,7 @@ const PieCharts = () => {
           </h1>
           <PieChart
             labels={["Processing", "Shipped", "Delivered"]}
-            data={[12, 9, 13]}
+            data={[order?.processing, order?.shipped, order?.delivered]}
             backgroundColor={[
               `hsl(110, 80%, 80%)`,
               `hsl(110, 80%, 50%)`,
@@ -25,13 +55,17 @@ const PieCharts = () => {
             Product Categories Ratio
           </h2>
           <DoughnutChart
-            labels={data.categories.map((i) => i.heading)}
-            data={data.categories.map((i) => i.value)}
+            labels={pieChartsStats?.charts?.productCategories.map(
+              (i) => Object.keys(i)[0]
+            )}
+            data={pieChartsStats?.charts?.productCategories.map(
+              (i) => Object.values(i)[0]
+            )}
             backgroundColor={data.categories.map(
               (i) => `hsl(${i.value * 4}, ${i.value}%, 50%)`
             )}
             legends={false}
-            cutout="70%"
+            cutout="80%"
           />
         </section>
 
@@ -41,10 +75,11 @@ const PieCharts = () => {
           </h2>
           <DoughnutChart
             labels={["In Stock", "Out Of Stock"]}
-            data={[40, 20]}
-            backgroundColor={["hsl(269, 80%, 40%)", "rgb(53, 162, 255)"]}
+            data={[stock?.inStock, stock?.outOfStock]}
+            backgroundColor={["hsl(269,80%,40%)", "rgb(53, 162, 255)"]}
             legends={false}
-            cutout="70%"
+            offset={[0, 80]}
+            cutout={"70%"}
           />
         </section>
 
@@ -60,7 +95,13 @@ const PieCharts = () => {
               "Production Cost",
               "Net Margin",
             ]}
-            data={[32, 18, 5, 20, 25]}
+            data={[
+              revenue?.marketingCost,
+              revenue?.discount,
+              revenue?.burnt,
+              revenue?.productionCost,
+              revenue?.netMargin,
+            ]}
             backgroundColor={[
               "hsl(110, 80%, 40%)",
               "hsl(19, 80%, 40%)",
@@ -75,30 +116,11 @@ const PieCharts = () => {
 
         <section className="bg-white p-2 rounded-lg shadow-md">
           <h2 className="text-lg font-bold text-center text-gray-900 mb-2">
-            Users Age Group
-          </h2>
-          <PieChart
-            labels={[
-              "Teenager (Below 20)",
-              "Adult (20-40)",
-              "Older (above 40)",
-            ]}
-            data={[30, 250, 70]}
-            backgroundColor={[
-              `hsl(10, 80%, 80%)`,
-              `hsl(10, 80%, 50%)`,
-              `hsl(10, 40%, 50%)`,
-            ]}
-          />
-        </section>
-
-        <section className="bg-white p-2 rounded-lg shadow-md">
-          <h2 className="text-lg font-bold text-center text-gray-900 mb-2">
             User Role Distribution
           </h2>
           <DoughnutChart
             labels={["Admin", "Customers"]}
-            data={[40, 250]}
+            data={[adminCustomer?.admin, adminCustomer?.customer]}
             backgroundColor={[`hsl(335, 100%, 38%)`, "hsl(44, 98%, 50%)"]}
             cutout="70%"
             legends={false}

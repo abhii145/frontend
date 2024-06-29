@@ -1,32 +1,49 @@
-import { useState } from "react";
+import axios from "axios";
+import { useEffect, useState } from "react";
 import { FaTrash } from "react-icons/fa";
+import { useSelector } from "react-redux";
+import { RootState } from "../../redux/store";
+import toast from "react-hot-toast";
 
-const img = "https://randomuser.me/api/portraits/women/54.jpg";
-const img2 = "https://randomuser.me/api/portraits/women/50.jpg";
-
-const users = [
-  {
-    avatar: img,
-    name: "Emily Palmer",
-    email: "emily.palmer@example.com",
-    gender: "female",
-    role: "user",
-  },
-  {
-    avatar: img2,
-    name: "May Scoot",
-    email: "aunt.may@example.com",
-    gender: "female",
-    role: "user",
-  },
-];
+interface User {
+  _id: string;
+  name: string;
+  email: string;
+  role: string;
+}
 
 const Customers = () => {
-  const [rows, setRows] = useState(users);
+  const [rows, setRows] = useState<User[]>([]);
+  const { user } = useSelector((state: RootState) => state.user);
 
-  const handleDelete = ({email}:{email:string}) => {
-    const filteredRows = rows.filter((user) => user.email !== email);
-    setRows(filteredRows);
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const response = await axios.get<{ data: User[] }>(
+          "http://localhost:5005/api/v1/user/all?id=666df7f2f299c6e181010798"
+        );
+        const data = response.data.data;
+        console.log(data);
+        setRows(data);
+      } catch (error) {
+        console.error("Error fetching users:", error);
+      }
+    };
+
+    fetchUsers();
+  }, [user?._id]);
+
+  const handleDelete = async (id: string) => {
+    try {
+      await axios.delete(
+        `http://localhost:5005/api/v1/user/${id}/?id=666df7f2f299c6e181010798`
+      );
+      const filteredRows = rows.filter((user) => user._id !== id);
+      setRows(filteredRows);
+      toast.success("User deleted successfully!");
+    } catch (error) {
+      console.error("Error deleting user:", error);
+    }
   };
 
   return (
@@ -39,32 +56,21 @@ const Customers = () => {
           <table className="min-w-full bg-white border border-gray-300">
             <thead className="bg-gray-200">
               <tr>
-                <th className="text-left p-3">Avatar</th>
                 <th className="text-left p-3">Name</th>
                 <th className="text-left p-3">Email</th>
-                <th className="text-left p-3">Gender</th>
                 <th className="text-left p-3">Role</th>
                 <th className="text-left p-3">Action</th>
               </tr>
             </thead>
             <tbody>
-              {rows.map((user, index) => (
-                <tr key={index} className="border-t hover:bg-gray-100">
-                  <td className="p-3">
-                    <img
-                      className="w-12 h-12 rounded-full mx-auto"
-                      src={user.avatar}
-                      alt={user.name}
-                      loading="lazy"
-                    />
-                  </td>
+              {rows.map((user) => (
+                <tr key={user._id} className="border-t hover:bg-gray-100">
                   <td className="p-3">{user.name}</td>
                   <td className="p-3">{user.email}</td>
-                  <td className="p-3">{user.gender}</td>
                   <td className="p-3">{user.role}</td>
                   <td className="p-3 text-center">
                     <button
-                      onClick={() => handleDelete(user.email)}
+                      onClick={() => handleDelete(user._id)}
                       className="text-red-500 hover:text-red-700 focus:outline-none"
                       aria-label="Delete user"
                     >

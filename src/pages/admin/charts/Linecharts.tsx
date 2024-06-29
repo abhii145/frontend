@@ -1,4 +1,10 @@
+import { useSelector } from "react-redux";
 import { LineChart } from "../../../components/admin/Charts";
+import { getLastMonths } from "../../../utils/features";
+import { RootState } from "../../../redux/store";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import toast from "react-hot-toast";
 
 const months = [
   "January",
@@ -16,6 +22,35 @@ const months = [
 ];
 
 const Linecharts = () => {
+
+const { last12Months, last6Months } = getLastMonths();
+const { user } = useSelector((state: RootState) => state.user);
+
+const [lineCharts, setLineCharts] = useState([]);
+
+useEffect(() => {
+  const fetchStats = async () => {
+    try {
+      const res = await axios.get(
+        `http://localhost:5005/api/v1/dashboard/line?id=${user?._id}`
+      );
+      const data = await res?.data;
+      console.log(data);
+      setLineCharts(data);
+    } catch (error) {
+      toast.error("Failed to fetch stats");
+    }
+  };
+  fetchStats();
+}, [user?._id]);
+
+  const products = lineCharts?.charts?.products;
+  const users = lineCharts?.charts?.users;
+  const revenue = lineCharts?.charts?.revenue;
+  const discount = lineCharts?.charts?.discount;
+
+
+
   return (
     <div className="p-8">
       <main className="max-w-7xl mx-auto space-y-10">
@@ -25,9 +60,7 @@ const Linecharts = () => {
 
         <section className="bg-white p-6 rounded-lg shadow-lg space-y-8">
           <LineChart
-            data={[
-              200, 444, 444, 556, 778, 455, 990, 1444, 256, 447, 1000, 1200,
-            ]}
+            data={users}
             label="Users"
             borderColor="rgb(53, 162, 255)"
             labels={months}
@@ -38,9 +71,9 @@ const Linecharts = () => {
 
         <section className="bg-white p-6 rounded-lg shadow-lg space-y-8">
           <LineChart
-            data={[40, 60, 244, 100, 143, 120, 41, 47, 50, 56, 32]}
-            backgroundColor="hsla(269, 80%, 40%, 0.4)"
-            borderColor="hsl(269, 80%, 40%)"
+            data={products}
+            backgroundColor={"hsla(269,80%,40%,0.4)"}
+            borderColor={"hsl(269,80%,40%)"}
             labels={months}
             label="Products"
           />
@@ -51,12 +84,9 @@ const Linecharts = () => {
 
         <section className="bg-white p-6 rounded-lg shadow-lg space-y-8">
           <LineChart
-            data={[
-              24000, 14400, 24100, 34300, 90000, 20000, 25600, 44700, 99000,
-              144400, 100000, 120000,
-            ]}
-            backgroundColor="hsla(129, 80%, 40%, 0.4)"
-            borderColor="hsl(129, 80%, 40%)"
+            data={revenue}
+            backgroundColor={"hsla(129,80%,40%,0.4)"}
+            borderColor={"hsl(129,80%,40%)"}
             label="Revenue"
             labels={months}
           />
@@ -65,12 +95,9 @@ const Linecharts = () => {
 
         <section className="bg-white p-6 rounded-lg shadow-lg space-y-8">
           <LineChart
-            data={[
-              9000, 12000, 12000, 9000, 1000, 5000, 4000, 1200, 1100, 1500,
-              2000, 5000,
-            ]}
-            backgroundColor="hsla(29, 80%, 40%, 0.4)"
-            borderColor="hsl(29, 80%, 40%)"
+            data={discount}
+            backgroundColor={"hsla(29,80%,40%,0.4)"}
+            borderColor={"hsl(29,80%,40%)"}
             label="Discount"
             labels={months}
           />

@@ -1,10 +1,11 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import ProductCard from "../components/ProductCard";
 import { useCategoriesQuery, useSearchProductsQuery } from "../redux/api/productAPI";
 import toast from "react-hot-toast";
 
-const OfferPage: React.FC = () => {
+const OfferPage: React.FC<{ searchQuery: string }> = ({ searchQuery }) => {
   const [isSidebarOpen, setSidebarOpen] = useState(false);
 
   const {
@@ -13,28 +14,22 @@ const OfferPage: React.FC = () => {
     isLoading: loadingCategories,
   } = useCategoriesQuery("");
 
-  const [search, setSearch] = useState("");
   const [sort, setSort] = useState("");
   const [maxPrice, setMaxPrice] = useState(100000);
   const [category, setCategory] = useState("");
   const [page, setPage] = useState(1);
 
   const {
-    isLoading: productLoading,
     data: searchedData,
-    isError: productIsError,
-    error: productError,
   } = useSearchProductsQuery({
-    search,
+    search:searchQuery,
     sort,
     category,
     page,
     price: maxPrice,
   });
 
-
-
- if (isError) return toast.error('failed to fetch categories');
+  if (isError) return toast.error("failed to fetch categories");
 
   const toggleSidebar = () => {
     setSidebarOpen(!isSidebarOpen);
@@ -42,7 +37,6 @@ const OfferPage: React.FC = () => {
 
   return (
     <div className="flex flex-col lg:flex-row h-screen overflow-hidden">
-      {/* Sidebar for filters */}
       <div
         className={`bg-white shadow-md w-full lg:w-64 transition-all duration-300 ${
           isSidebarOpen ? "block" : "hidden lg:block"
@@ -58,7 +52,6 @@ const OfferPage: React.FC = () => {
             </button>
           </div>
 
-          {/* Sort By Dropdown */}
           <div className="mt-4">
             <label htmlFor="sort" className="block mb-2">
               Sort By
@@ -74,7 +67,6 @@ const OfferPage: React.FC = () => {
             </select>
           </div>
 
-          {/* Price Range Slider */}
           <div className="mt-4">
             <label className="block mb-2">Max Price: {maxPrice || ""}</label>
             <input
@@ -93,9 +85,7 @@ const OfferPage: React.FC = () => {
 
           {/* Category Dropdown */}
           <div className="mt-4">
-            <label className="block mb-2">
-              Category
-            </label>
+            <label className="block mb-2">Category</label>
             <select
               className="w-full p-2 border rounded"
               onChange={(e) => setCategory(e.target.value)}
@@ -143,7 +133,16 @@ const OfferPage: React.FC = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {searchedData?.products.map((product) => (
             <Link to={`/product/${product?._id}`} key={product?.id}>
-              <ProductCard product={product} title={""} price={0} stock={0} category={""} description={""} photo={""} _id={""} />
+              <ProductCard
+                product={product}
+                title={""}
+                price={0}
+                stock={0}
+                category={""}
+                description={""}
+                photo={""}
+                _id={""}
+              />
             </Link>
           ))}
         </div>

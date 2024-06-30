@@ -1,4 +1,4 @@
-import React, { Suspense } from "react";
+import React, { Suspense, useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import { useSelector } from "react-redux";
@@ -35,6 +35,7 @@ import Checkout from "./pages/Checkout";
 
 const App = () => {
   const { user } = useSelector((state: RootState) => state.user);
+  const [searchQuery, setSearchQuery] = useState("");
 
   return (
     <Router>
@@ -42,10 +43,18 @@ const App = () => {
       <Suspense fallback={<Loader />}>
         <Routes>
           {/* Public Routes */}
-          <Route element={<PublicLayout user={user} />}>
+          <Route
+            element={
+              <PublicLayout
+                user={user}
+                searchQuery={searchQuery}
+                setSearchQuery={setSearchQuery}
+              />
+            }
+          >
             <Route path="/" element={<Home />} />
             <Route path="/cart" element={<Cart />} />
-            <Route path="/search" element={<Search />} />
+            <Route path="/search" element={<Search searchQuery={searchQuery}/>} />
             <Route path="/product/:id" element={<ProductDetail />} />
           </Route>
 

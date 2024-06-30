@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   Elements,
   PaymentElement,
@@ -8,11 +9,11 @@ import { loadStripe } from "@stripe/stripe-js";
 import { useState } from "react";
 import { FormEvent } from "react";
 import toast from "react-hot-toast";
-import { useNewOrderMutation } from "../redux/api/orderAPI";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import { resetCart } from "../redux/reducer/cartSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../redux/store";
+import axios from "axios";
 
 const stripePromise = loadStripe(import.meta.env.VITE_LOAD_STRIPE_KEY);
 
@@ -22,7 +23,15 @@ const CheckoutForm = () => {
   const dispatch = useDispatch();
   const stripe = useStripe();
   const elements = useElements();
-  const [newOrder] = useNewOrderMutation();
+
+  const placeOrder = async (orderData: any) => {
+    try {
+      await axios.post("http://localhost:5005/api/v1/order/new", orderData);
+      toast.success("Order Placed Successfully");
+    } catch (error) {
+      toast.error("Something Went Wrong");
+    }
+  };
 
   const {
     shippingInfo,
@@ -77,7 +86,8 @@ const CheckoutForm = () => {
     }
 
     if (paymentIntent.status === "succeeded") {
-      await newOrder(orderData);
+      // await newOrder(orderData);
+      await placeOrder(orderData);
       dispatch(resetCart());
       console.log("Order Placed Successfully");
       navigate("/orders");

@@ -187,6 +187,8 @@ declare type User = {
 declare type UserProps = {
   user: User | null;
   loading?: boolean;
+  searchQuery: string;
+  setSearchQuery: React.Dispatch<React.SetStateAction<string>>;
   error?: string | null;
 };
 

@@ -1,4 +1,6 @@
-import React, { useEffect, useState } from "react";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { useEffect, useState } from "react";
 import { RootState } from "../../redux/store";
 import { useSelector } from "react-redux";
 import axios from "axios";
@@ -14,7 +16,10 @@ const Transactions = () => {
         const res = await axios.get(
           `http://localhost:5005/api/v1/order/all?id=${user?._id}`
         );
-        setTransactionsData(res.data);
+
+        const data = await res.data;
+
+        setTransactionsData(data);
       } catch (error) {
         console.log(error);
       }
@@ -45,9 +50,9 @@ const Transactions = () => {
             </thead>
             <tbody>
               {transactionsData.orders.map(
-                (transaction: any, index: number) => (
+                (transaction: any) => (
                   <tr key={transaction._id} className="border-t">
-                    <td className="p-3">{transaction.user.name}</td>
+                    <td className="p-3">{transaction?.user?.name}</td>
                     <td className="p-3 flex flex-wrap">
                       {transaction.orderItems.map((item: any) => (
                         <img

@@ -1,68 +1,93 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useForm } from "react-hook-form";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { FaTrash } from "react-icons/fa";
 import { TbStatusChange } from "react-icons/tb";
-import {
-  useDeleteOrderMutation,
-  useUpdateOrderMutation,
-} from "../../../redux/api/orderAPI";
+import toast from "react-hot-toast";
 
 const TransactionManagement = () => {
-  const [orderDetails, setOrderDetails] = useState<any>({
-    status: "Processing",
-  });
+  const navigate = useNavigate();
+  const [orderDetails, setOrderDetails] = useState<any>(null);
 
   const { id } = useParams<{ id: string }>();
+
+  const updateOrders = async (orderId: string, userId: string) => {
+    try {
+      await axios.put(
+        `http://localhost:5005/api/v1/order/${orderId}?id=${userId}`
+      );
+      toast.success("Order updated successfully");
+    } catch (error) {
+      toast.error("Error updating order");
+    }
+  };
+
+  const deleteOrders = async (orderId: string, userId: string) => {
+    try {
+      await axios.delete(
+        `http://localhost:5005/api/v1/order/${orderId}?id=${userId}`
+      );
+      toast.success("Order deleted successfully");
+    } catch (error) {
+      toast.error("Error deleting order");
+    }
+  };
 
   useEffect(() => {
     const fetchOrder = async () => {
       try {
         const res = await axios.get(`http://localhost:5005/api/v1/order/${id}`);
-        const data = res.data.order;
-        console.log(data);
+        const data = await res.data.order;
+        console.log("Fetched data:", data);
         setOrderDetails(data);
       } catch (error) {
         console.error("Error fetching order:", error);
       }
     };
-    fetchOrder();
+
+    if (id) {
+      fetchOrder();
+    }
   }, [id]);
 
-  const [updateOrder] = useUpdateOrderMutation();
-  const [deleteOrder] = useDeleteOrderMutation();
-
   const updateHandler = async () => {
-    const newStatus =
-      orderDetails.status === "Processing"
-        ? "Shipped"
-        : orderDetails.status === "Shipped"
-        ? "Delivered"
-        : "Processing";
-    setOrderDetails({ ...orderDetails, status: newStatus });
-    await updateOrder({
-      userId: orderDetails.user._id!,
-      orderId: orderDetails._id!,
-    });
+    try {
+      const newStatus =
+        orderDetails.status === "Processing"
+          ? "Shipped"
+          : orderDetails.status === "Shipped"
+          ? "Delivered"
+          : "Processing";
+      setOrderDetails({ ...orderDetails, status: newStatus });
+      await updateOrders(orderDetails._id, orderDetails.user._id);
+      navigate("/admin/transactions");
+    } catch (error) {
+      console.error("Failed to update order:", error);
+    }
   };
 
   const deleteHandler = async () => {
- await deleteOrder({
-     userId: orderDetails.user._id!,
-     orderId: orderDetails._id!,
-   });
+    try {
+      await deleteOrders(orderDetails._id, orderDetails.user._id);
+      navigate("/admin/transactions");
+    } catch (error) {
+      console.error("Failed to delete order:", error);
+    }
   };
 
   const {
     handleSubmit,
-    watch,
-    formState: { errors },
   } = useForm();
 
-  const onSubmit = (data: any) => {
+  const onSubmit = (data: unknown) => {
     console.log(data);
   };
+
+  if (!orderDetails) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <main className="p-6 bg-gray-100 min-h-screen">
@@ -71,12 +96,12 @@ const TransactionManagement = () => {
           <h2 className="text-xl font-bold text-gray-800">Order Items</h2>
           {orderDetails.orderItems?.map((item: any) => (
             <ProductCard
-              key={item._id}
-              name={item.title}
-              photo={item.photo}
-              _id={item.productId}
-              quantity={item.quantity}
-              price={item.price}
+              key={item?._id}
+              name={item?.title}
+              photo={item?.photo}
+              _id={item?.productId}
+              quantity={item?.quantity}
+              price={item?.price}
             />
           ))}
         </section>

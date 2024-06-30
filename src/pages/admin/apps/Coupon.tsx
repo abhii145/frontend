@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import axios from "axios";
 
 const allLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 const allNumbers = "1234567890";
@@ -10,6 +11,7 @@ const allSymbols = "!@#$%^&*()_+";
 const couponSchema = z.object({
   size: z.number().min(4).max(25),
   prefix: z.string().optional(),
+  amount: z.number().min(1, "Amount must be at least 1"),
   includeNumbers: z.boolean(),
   includeCharacters: z.boolean(),
   includeSymbols: z.boolean(),
@@ -30,11 +32,20 @@ const Coupon = () => {
     defaultValues: {
       size: 4,
       prefix: "",
+      amount: 0,
       includeNumbers: false,
       includeCharacters: false,
       includeSymbols: false,
     },
   });
+
+  const createCoupon = async (discountcode: string, amount: number) => {
+    const coupon = await axios.post(
+      "http://localhost:5005/api/v1/payment//coupon/new?id=666df7f2f299c6e181010798",
+      { coupon: discountcode, amount }
+    );
+    console.log(coupon);
+  };
 
   const copyText = async (coupon: string) => {
     await navigator.clipboard.writeText(coupon);
@@ -65,6 +76,8 @@ const Coupon = () => {
     }
 
     setCoupon(result);
+
+    createCoupon(result, data.amount);
   };
 
   useEffect(() => {
@@ -103,6 +116,20 @@ const Coupon = () => {
             />
             {errors.size && (
               <p className="text-red-500 text-xs">{errors.size.message}</p>
+            )}
+          </div>
+
+          <div className="flex flex-col space-y-2">
+            <label className="text-gray-700 font-semibold">Amount</label>
+            <input
+              type="number"
+              placeholder="Enter the discount amount"
+              className="mt-1 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              {...register("amount", { valueAsNumber: true })}
+              min={3}
+            />
+            {errors.amount && (
+              <p className="text-red-500 text-xs">{errors.amount.message}</p>
             )}
           </div>
 

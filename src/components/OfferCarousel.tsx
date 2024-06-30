@@ -9,16 +9,6 @@ const OfferCarousel: React.FC = () => {
       src: "https://img.freepik.com/premium-vector/big-offer-sale-banner-special-offer-price-label-design-product-discount-festival-tag-design_1135545-1198.jpg",
       alt: "Offer 1",
     },
-    {
-      id: 2,
-      src: "https://static.vecteezy.com/system/resources/thumbnails/004/243/606/small/special-offer-final-sale-banner-on-red-background-illustration-premium-free-vector.jpg",
-      alt: "Offer 2",
-    },
-    {
-      id: 3,
-      src: "https://static.vecteezy.com/system/resources/previews/006/532/742/non_2x/flash-sale-banner-illustration-template-design-of-special-offer-discount-for-media-promotion-and-social-media-post-free-vector.jpg",
-      alt: "Offer 3",
-    },
   ];
 
   return (

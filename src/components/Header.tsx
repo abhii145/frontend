@@ -12,7 +12,7 @@ import { UserProps } from "../types";
 import { AppDispatch } from "../redux/store";
 import { logoutUser } from "../redux/reducer/userSlice";
 
-const Header = ({ user }: UserProps) => {
+const Header = ({ user, searchQuery, setSearchQuery }: UserProps) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const dialogRef = useRef<HTMLDivElement | null>(null);
   const dispatch = useDispatch<AppDispatch>();
@@ -55,6 +55,8 @@ const Header = ({ user }: UserProps) => {
           <div className="relative w-full max-w-lg">
             <input
               type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search..."
               className="w-full py-2 pl-10 pr-4  focus:outline-none focus:border-blue-500"
             />

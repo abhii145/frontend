@@ -13,9 +13,9 @@ interface ProtectedRouteProps {
   redirect?: string;
 }
 
-const PublicLayout = ({ user }:UserProps) => (
+const PublicLayout = ({ user, searchQuery, setSearchQuery }: UserProps) => (
   <>
-    <Header user={user} />
+    <Header user={user} searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
     <Outlet />
   </>
 );
@@ -31,7 +31,6 @@ const PrivateLayout = () => {
 
   return (
     <>
-      <Header user={user} />
       <Outlet />
     </>
   );

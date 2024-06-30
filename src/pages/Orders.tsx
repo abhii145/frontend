@@ -24,9 +24,9 @@ const OrderPage: React.FC = () => {
         const res = await axios.get(
           `http://localhost:5005/api/v1/order/myorders?id=${user?._id}`
         );
-        const orderData = res.data;
+        const orderData = await res.data;
         console.log(orderData);
-        setOrders(orderData.orders);
+        setOrders(orderData?.orders);
       } catch (error) {
         console.log("Error fetching orders:", error);
       }
